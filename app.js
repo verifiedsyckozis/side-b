@@ -205,24 +205,25 @@ const PUZZLES = {
       g.exponentialRampToValueAtTime(0.0001, t + attack + release);
     }
 
-    // A soft, rounded button click. `pitch` sets its weight.
+    // A soft "tok", like a tape-deck key. Steady pitch and a very short decay,
+    // so it reads as a tap rather than a tone. `pitch` sets its weight.
     function click(pitch) {
       const c = context(); if (!c) return;
       const t = c.currentTime + 0.005;
-      const o = c.createOscillator(), g = c.createGain();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(pitch, t);
-      o.frequency.exponentialRampToValueAtTime(pitch * 0.6, t + 0.06);
-      env(c, g, t, 0.32, 0.004, 0.09);
-      o.connect(g).connect(c.destination);
-      o.start(t); o.stop(t + 0.12);
+      const body = c.createOscillator(), bg = c.createGain();
+      body.type = 'sine';
+      body.frequency.value = pitch;
+      env(c, bg, t, 0.34, 0.002, 0.035);
+      body.connect(bg).connect(c.destination);
+      body.start(t); body.stop(t + 0.06);
 
-      const n = c.createBufferSource(), f = c.createBiquadFilter(), ng = c.createGain();
-      n.buffer = noiseBuffer(c);
-      f.type = 'bandpass'; f.frequency.value = pitch * 2.2; f.Q.value = 1.2;
-      env(c, ng, t, 0.12, 0.001, 0.025);
-      n.connect(f).connect(ng).connect(c.destination);
-      n.start(t); n.stop(t + 0.03);
+      // A quieter upper partial gives it a wooden edge; it fades even faster.
+      const edge = c.createOscillator(), eg = c.createGain();
+      edge.type = 'sine';
+      edge.frequency.value = pitch * 2.76;
+      env(c, eg, t, 0.07, 0.001, 0.015);
+      edge.connect(eg).connect(c.destination);
+      edge.start(t); edge.stop(t + 0.03);
     }
 
     // A tiny burst of radio static.
@@ -273,8 +274,8 @@ const PUZZLES = {
     }
 
     return {
-      place: () => click(1100),
-      erase: () => click(520),
+      place: () => click(560),
+      erase: () => click(360),
       blip,
       chord,
       unlock,

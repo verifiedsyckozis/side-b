@@ -1,5 +1,5 @@
 // Side B offline cache. Bump VERSION when shipping changes.
-const VERSION = 'side-b-v2';
+const VERSION = 'side-b-v3';
 const FILES = ['./', './index.html', './style.css', './app.js'];
 
 self.addEventListener('install', (e) => {
