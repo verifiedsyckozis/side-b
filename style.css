@@ -100,38 +100,11 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
   height: 4px;
   background: var(--amber-bright);
   opacity: 0.55;
-  transform-origin: bottom;
 }
-.eq.twitch i { animation: eq 360ms ease-out 1; }
-.eq.twitch i:nth-child(2) { animation-duration: 300ms; }
-.eq.twitch i:nth-child(3) { animation-duration: 420ms; }
-.eq.twitch i:nth-child(4) { animation-duration: 260ms; }
-.eq.twitch i:nth-child(5) { animation-duration: 380ms; }
-@keyframes eq {
-  0% { transform: scaleY(1); }
-  30% { transform: scaleY(3.4); }
-  60% { transform: scaleY(1.8); }
-  100% { transform: scaleY(1); }
-}
-
-.mute {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 52px;
-  min-width: 140px;
-  padding: 8px 18px;
-  border-radius: 12px;
-  border: 1px solid var(--shell-edge);
-  background: var(--shell);
-  font-size: 18px;
-  font-weight: 500;
-}
-.mute .icon { width: 24px; height: 24px; }
-.mute .icon-off { display: none; }
-.mute[aria-pressed="true"] { color: var(--muted-text); }
-.mute[aria-pressed="true"] .icon-on { display: none; }
-.mute[aria-pressed="true"] .icon-off { display: inline; }
+.eq i:nth-child(2) { height: 7px; }
+.eq i:nth-child(3) { height: 10px; }
+.eq i:nth-child(4) { height: 6px; }
+.eq i:nth-child(5) { height: 3px; }
 
 /* ---------- Layout ---------- */
 
@@ -396,7 +369,6 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .eq.twitch i { animation: none; }
   .cell.pointed::before { animation: none; }
   .cell { transition: none; }
 }

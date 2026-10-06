@@ -1,6 +1,6 @@
 # Side B
 
-A quiet single-page Sudoku. Static files only: `index.html`, `style.css`, `app.js` (puzzle data included), plus `sw.js` so it keeps working offline after the first visit.
+A quiet single-page Sudoku. Static files only, no sound: `index.html`, `style.css`, `app.js` (puzzle data included), plus `sw.js` so it keeps working offline after the first visit.
 
 Host: push to GitHub and turn on Pages for the branch root. No build step.
 
@@ -11,4 +11,4 @@ Puzzles: 30 each for Easy (38–46 clues), Medium (30–31), Hard (25–29). Eve
 
 When shipping changes, bump `VERSION` in `sw.js` so iPads pick up the new files.
 
-Keys: arrows move, 1–9 place, N notes, Backspace erase, Z undo, Shift+Z or Y redo, H hint, M mute.
+Keys: arrows move, 1–9 place, N notes, Backspace erase, Z undo, Shift+Z or Y redo, H hint.

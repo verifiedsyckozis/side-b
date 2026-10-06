@@ -172,123 +172,6 @@ const PUZZLES = {
     },
   };
 
-  // ---------- Sound (Web Audio, generated, nothing to download) ----------
-
-  const sound = (function () {
-    let ctx = null;
-    let noise = null;
-    let muted = !!store.get('muted', false);
-
-    function context() {
-      if (muted) return null;
-      if (!ctx) {
-        const AC = window.AudioContext || window.webkitAudioContext;
-        if (!AC) return null;
-        try { ctx = new AC(); } catch (e) { return null; }
-      }
-      if (ctx.state === 'suspended') ctx.resume().catch(() => {});
-      return ctx;
-    }
-
-    function noiseBuffer(c) {
-      if (noise) return noise;
-      noise = c.createBuffer(1, Math.floor(c.sampleRate * 0.2), c.sampleRate);
-      const data = noise.getChannelData(0);
-      for (let i = 0; i < data.length; i++) data[i] = Math.random() * 2 - 1;
-      return noise;
-    }
-
-    function env(c, gainNode, t, peak, attack, release) {
-      const g = gainNode.gain;
-      g.setValueAtTime(0.0001, t);
-      g.exponentialRampToValueAtTime(peak, t + attack);
-      g.exponentialRampToValueAtTime(0.0001, t + attack + release);
-    }
-
-    // A soft "tok", like a tape-deck key. Steady pitch and a very short decay,
-    // so it reads as a tap rather than a tone. `pitch` sets its weight.
-    function click(pitch) {
-      const c = context(); if (!c) return;
-      const t = c.currentTime + 0.005;
-      const body = c.createOscillator(), bg = c.createGain();
-      body.type = 'sine';
-      body.frequency.value = pitch;
-      env(c, bg, t, 0.34, 0.002, 0.035);
-      body.connect(bg).connect(c.destination);
-      body.start(t); body.stop(t + 0.06);
-
-      // A quieter upper partial gives it a wooden edge; it fades even faster.
-      const edge = c.createOscillator(), eg = c.createGain();
-      edge.type = 'sine';
-      edge.frequency.value = pitch * 2.76;
-      env(c, eg, t, 0.07, 0.001, 0.015);
-      edge.connect(eg).connect(c.destination);
-      edge.start(t); edge.stop(t + 0.03);
-    }
-
-    // A tiny burst of radio static.
-    function blip() {
-      const c = context(); if (!c) return;
-      const t = c.currentTime + 0.005;
-      const n = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
-      n.buffer = noiseBuffer(c);
-      f.type = 'bandpass'; f.frequency.value = 2600; f.Q.value = 0.8;
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.2, t + 0.004);
-      g.gain.setValueAtTime(0.09, t + 0.025);
-      g.gain.setValueAtTime(0.18, t + 0.04);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
-      n.connect(f).connect(g).connect(c.destination);
-      n.start(t); n.stop(t + 0.1);
-    }
-
-    // A short, warm major-seventh chord, gently strummed.
-    function chord() {
-      const c = context(); if (!c) return;
-      const t0 = c.currentTime + 0.02;
-      const lp = c.createBiquadFilter();
-      lp.type = 'lowpass'; lp.frequency.value = 1600; lp.Q.value = 0.4;
-      const master = c.createGain(); master.gain.value = 0.9;
-      lp.connect(master).connect(c.destination);
-      [146.83, 220.0, 277.18, 369.99, 554.37].forEach((hz, k) => {
-        const t = t0 + k * 0.045;
-        const o = c.createOscillator(), g = c.createGain();
-        o.type = 'triangle';
-        o.frequency.value = hz;
-        o.detune.value = (k % 2 ? 4 : -4);
-        g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.11, t + 0.05);
-        g.gain.exponentialRampToValueAtTime(0.0001, t + 2.0);
-        o.connect(g).connect(lp);
-        o.start(t); o.stop(t + 2.1);
-      });
-    }
-
-    // iOS: start/resume the context inside the first user gesture, silently.
-    function unlock() {
-      const c = context(); if (!c) return;
-      try {
-        const b = c.createBuffer(1, 1, 22050), s = c.createBufferSource();
-        s.buffer = b; s.connect(c.destination); s.start(0);
-      } catch (e) { /* ignore */ }
-    }
-
-    return {
-      place: () => click(560),
-      erase: () => click(360),
-      blip,
-      chord,
-      unlock,
-      get muted() { return muted; },
-      setMuted(m) {
-        muted = m;
-        store.set('muted', m);
-        if (m && ctx && ctx.state === 'running') ctx.suspend().catch(() => {});
-        if (!m) unlock();
-      },
-    };
-  })();
-
   // ---------- State ----------
 
   const state = {
@@ -396,22 +279,17 @@ const PUZZLES = {
     if (state.notesMode) {
       if (state.values[i]) return;
       commit(change(i, 0, state.notes[i] ^ (1 << d)));
-      sound.place();
       afterMove();
       return;
     }
 
     if (state.values[i] === d) {
       commit(change(i, 0, state.notes[i]));
-      sound.erase();
       afterMove();
       return;
     }
 
     commit(change(i, d, 0));   // placing a digit clears that cell's notes
-    const conflicts = findConflicts(state.values);
-    if (conflicts.has(i)) sound.blip(); else sound.place();
-    twitch();
     afterMove();
   }
 
@@ -420,7 +298,6 @@ const PUZZLES = {
     if (i < 0 || state.given[i] || state.solved) return;
     if (!state.values[i] && !state.notes[i]) return;
     commit(state.values[i] ? change(i, 0, state.notes[i]) : change(i, 0, 0));
-    sound.erase();
     afterMove();
   }
 
@@ -430,8 +307,7 @@ const PUZZLES = {
     for (const ch of changes) { state.values[ch.i] = ch.from[0]; state.notes[ch.i] = ch.from[1]; }
     state.future.push(changes);
     state.selected = changes[0].i;
-    sound.erase();
-    afterMove(true);
+    afterMove();
   }
 
   function redo() {
@@ -440,8 +316,7 @@ const PUZZLES = {
     for (const ch of changes) { state.values[ch.i] = ch.to[0]; state.notes[ch.i] = ch.to[1]; }
     state.past.push(changes);
     state.selected = changes[0].i;
-    sound.place();
-    afterMove(true);
+    afterMove();
   }
 
   // Hint: first point at one wrong digit if there is one; otherwise fill one empty cell.
@@ -473,22 +348,16 @@ const PUZZLES = {
     }
     state.selected = target;
     commit(change(target, sol[target], 0));
-    sound.place();
     afterMove();
     say('Filled in one square.');
   }
 
-  function afterMove(quiet) {
+  function afterMove() {
     const wasSolved = state.solved;
     state.solved = isSolved(state.values);
     save();
     render();
-    if (state.solved && !wasSolved && !quiet) {
-      sound.chord();
-      say('That’s the whole side. Pick a new puzzle when you’re ready.', true);
-    } else if (state.solved && !wasSolved) {
-      say('That’s the whole side.', true);
-    }
+    if (state.solved && !wasSolved) say('That’s the whole side. Pick a new puzzle when you’re ready.', true);
   }
 
   // ---------- Rendering ----------
@@ -600,14 +469,6 @@ const PUZZLES = {
     pointAt.t = setTimeout(() => el.classList.remove('pointed'), 2600);
   }
 
-  function twitch() {
-    if (sound.muted) return;
-    const eq = $('eq');
-    eq.classList.remove('twitch');
-    void eq.offsetWidth;
-    eq.classList.add('twitch');
-  }
-
   function say(text, lasting) {
     const el = $('status');
     clearTimeout(say.t);
@@ -615,13 +476,6 @@ const PUZZLES = {
     el.classList.remove('fade');
     el.classList.toggle('done', !!lasting);
     if (!lasting) say.t = setTimeout(() => el.classList.add('fade'), 4000);
-  }
-
-  function renderMute() {
-    const m = sound.muted;
-    $('mute').setAttribute('aria-pressed', String(m));
-    $('mute-label').textContent = m ? 'Muted' : 'Sound on';
-    $('mute').setAttribute('aria-label', m ? 'Sound is muted. Tap to turn sound on.' : 'Sound is on. Tap to mute.');
   }
 
   // ---------- Input ----------
@@ -636,11 +490,6 @@ const PUZZLES = {
     state.notesMode = !state.notesMode;
     save();
     render();
-  }
-
-  function toggleMute() {
-    sound.setMuted(!sound.muted);
-    renderMute();
   }
 
   function move(dr, dc) {
@@ -672,15 +521,6 @@ const PUZZLES = {
   }
 
   function bind() {
-    // Audio may only start after a tap; do it quietly on the first one.
-    const firstGesture = () => {
-      sound.unlock();
-      window.removeEventListener('pointerdown', firstGesture, true);
-      window.removeEventListener('keydown', firstGesture, true);
-    };
-    window.addEventListener('pointerdown', firstGesture, true);
-    window.addEventListener('keydown', firstGesture, true);
-
     boardEl.addEventListener('click', (e) => {
       const cell = e.target.closest('.cell');
       if (cell) select(Number(cell.dataset.i));
@@ -694,7 +534,6 @@ const PUZZLES = {
     $('undo').addEventListener('click', undo);
     $('redo').addEventListener('click', redo);
     $('hint').addEventListener('click', hint);
-    $('mute').addEventListener('click', toggleMute);
     $('help').addEventListener('click', () => { $('howto').hidden = !$('howto').hidden; });
     $('howto-close').addEventListener('click', () => { $('howto').hidden = true; store.set('seenHowTo', true); });
     document.querySelectorAll('.level').forEach((b) => b.addEventListener('click', () => newPuzzle(b)));
@@ -715,7 +554,6 @@ const PUZZLES = {
       else if (k === 'n' || k === 'N') toggleNotes();
       else if (k === 'z' || k === 'Z') { e.shiftKey ? redo() : undo(); }
       else if (k === 'y' || k === 'Y') redo();
-      else if (k === 'm' || k === 'M') toggleMute();
       else if (k === 'h' || k === 'H') hint();
     });
   }
@@ -725,7 +563,6 @@ const PUZZLES = {
   buildBoard();
   bind();
   if (!restore()) startPuzzle('easy');
-  renderMute();
   render();
   if (!store.get('seenHowTo', false)) $('howto').hidden = false;
   if (state.solved) say('That’s the whole side. Pick a new puzzle when you’re ready.', true);
