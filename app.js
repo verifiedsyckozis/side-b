@@ -207,35 +207,35 @@ const PUZZLES = {
 
     // A soft, rounded button click. `pitch` sets its weight.
     function click(pitch) {
-      const c = context(); if (!c || c.state !== 'running') return;
+      const c = context(); if (!c) return;
       const t = c.currentTime + 0.005;
       const o = c.createOscillator(), g = c.createGain();
       o.type = 'sine';
       o.frequency.setValueAtTime(pitch, t);
-      o.frequency.exponentialRampToValueAtTime(pitch * 0.55, t + 0.04);
-      env(c, g, t, 0.07, 0.003, 0.05);
+      o.frequency.exponentialRampToValueAtTime(pitch * 0.6, t + 0.06);
+      env(c, g, t, 0.32, 0.004, 0.09);
       o.connect(g).connect(c.destination);
-      o.start(t); o.stop(t + 0.08);
+      o.start(t); o.stop(t + 0.12);
 
       const n = c.createBufferSource(), f = c.createBiquadFilter(), ng = c.createGain();
       n.buffer = noiseBuffer(c);
       f.type = 'bandpass'; f.frequency.value = pitch * 2.2; f.Q.value = 1.2;
-      env(c, ng, t, 0.025, 0.001, 0.018);
+      env(c, ng, t, 0.12, 0.001, 0.025);
       n.connect(f).connect(ng).connect(c.destination);
       n.start(t); n.stop(t + 0.03);
     }
 
     // A tiny burst of radio static.
     function blip() {
-      const c = context(); if (!c || c.state !== 'running') return;
+      const c = context(); if (!c) return;
       const t = c.currentTime + 0.005;
       const n = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
       n.buffer = noiseBuffer(c);
       f.type = 'bandpass'; f.frequency.value = 2600; f.Q.value = 0.8;
       g.gain.setValueAtTime(0.0001, t);
-      g.gain.exponentialRampToValueAtTime(0.045, t + 0.004);
-      g.gain.setValueAtTime(0.02, t + 0.025);
-      g.gain.setValueAtTime(0.04, t + 0.04);
+      g.gain.exponentialRampToValueAtTime(0.2, t + 0.004);
+      g.gain.setValueAtTime(0.09, t + 0.025);
+      g.gain.setValueAtTime(0.18, t + 0.04);
       g.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
       n.connect(f).connect(g).connect(c.destination);
       n.start(t); n.stop(t + 0.1);
@@ -243,7 +243,7 @@ const PUZZLES = {
 
     // A short, warm major-seventh chord, gently strummed.
     function chord() {
-      const c = context(); if (!c || c.state !== 'running') return;
+      const c = context(); if (!c) return;
       const t0 = c.currentTime + 0.02;
       const lp = c.createBiquadFilter();
       lp.type = 'lowpass'; lp.frequency.value = 1600; lp.Q.value = 0.4;
@@ -256,7 +256,7 @@ const PUZZLES = {
         o.frequency.value = hz;
         o.detune.value = (k % 2 ? 4 : -4);
         g.gain.setValueAtTime(0.0001, t);
-        g.gain.exponentialRampToValueAtTime(0.04, t + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.11, t + 0.05);
         g.gain.exponentialRampToValueAtTime(0.0001, t + 2.0);
         o.connect(g).connect(lp);
         o.start(t); o.stop(t + 2.1);
@@ -273,8 +273,8 @@ const PUZZLES = {
     }
 
     return {
-      place: () => click(1500),
-      erase: () => click(620),
+      place: () => click(1100),
+      erase: () => click(520),
       blip,
       chord,
       unlock,
