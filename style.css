@@ -1,29 +1,30 @@
-/* Side B — late-night FM booth, paper puzzle on the desk. */
+/* Side B — twilight sky, a unicorn in the corner, a pearl puzzle card. */
 
 :root {
-  --bg: #1e1c1b;
-  --bg-2: #262321;
-  --shell: #2d2a27;
-  --shell-edge: #3b3733;
-  --paper: #f4eee2;
-  --paper-shade: #e9e0cf;
-  --paper-same: #f1dfb6;
-  --line: #b9ad98;
-  --line-bold: #4a433c;
-  --amber: #9a5a0c;          /* given digits: deep amber ink, readable on paper */
-  --amber-bright: #e0a24a;   /* amber on charcoal */
-  --cream: #efe6d2;          /* player-side text on charcoal */
-  --ink: #3a3f4a;            /* player digits on paper: soft graphite-blue */
-  --note: #8a8378;
-  --magenta: #a8547a;
-  --magenta-soft: #ecd3dd;
+  --bg: #241e3a;
+  --bg-2: #2e2749;
+  --shell: #342c52;
+  --shell-edge: #4b4073;
+  --paper: #fcf9fd;
+  --paper-shade: #f1eaf7;
+  --paper-same: #fbe2ee;
+  --line: #d3c7e0;
+  --line-bold: #5b4b7d;
+  --amber: #4f2a74;          /* given digits: deep plum ink on pearl */
+  --amber-bright: #f4b8d8;   /* soft pink accent on the night sky */
+  --cream: #f3edf8;          /* text on the night sky */
+  --ink: #1d6b8a;            /* player digits on pearl: teal-blue */
+  --note: #8a7fa0;
+  --magenta: #c2508b;
+  --magenta-soft: #f8dbea;
   --red: #c23b22;
   --red-soft: #f6d9cf;
-  --muted-text: #a69d8f;
+  --muted-text: #ada2c6;
+  --rainbow: linear-gradient(135deg, #f6a8cf, #c7a6f2 35%, #9fd3f0 70%, #a8e8cf);
 
   --ui: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", Roboto, Arial, sans-serif;
-  --label: "American Typewriter", "Courier New", Courier, ui-monospace, monospace;
-  --dial: "Avenir Next Condensed", "Arial Narrow", "Helvetica Neue", sans-serif;
+  --label: "Avenir Next", Avenir, -apple-system, "Helvetica Neue", sans-serif;
+  --script: "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
 
   --board: min(calc(100dvh - 196px), calc(100vw - 480px), 640px);
 }
@@ -40,11 +41,15 @@ html, body {
 }
 
 body {
+  position: relative;
   min-height: 100dvh;
   padding: max(12px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
   background:
-    radial-gradient(ellipse at 30% 0%, #2a2624 0%, transparent 60%),
-    var(--bg);
+    radial-gradient(ellipse 60% 45% at 12% 0%, rgba(246, 168, 207, 0.20) 0%, transparent 70%),
+    radial-gradient(ellipse 55% 50% at 92% 18%, rgba(159, 211, 240, 0.16) 0%, transparent 70%),
+    radial-gradient(ellipse 70% 50% at 70% 100%, rgba(199, 166, 242, 0.22) 0%, transparent 70%),
+    linear-gradient(180deg, #2a2245 0%, var(--bg) 100%);
+  background-attachment: fixed;
 }
 
 button {
@@ -59,6 +64,34 @@ button {
 button:focus { outline: none; }
 button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2px; }
 
+/* ---------- Sky ---------- */
+
+.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+.sky {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  fill: #fff4fb;
+  opacity: 0.55;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.big-unicorn {
+  position: fixed;
+  right: max(-40px, -3vw);
+  bottom: 0;
+  width: min(40vw, 44vh, 460px);
+  height: min(40vw, 44vh, 460px);
+  opacity: 0.32;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.top, .deck { position: relative; z-index: 1; }
+
 /* ---------- Header ---------- */
 
 .top {
@@ -70,41 +103,18 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
   margin: 0 auto 12px;
 }
 
-.station { display: flex; align-items: baseline; gap: 16px; }
+.station { display: flex; align-items: center; gap: 10px; }
+
+.title-unicorn { width: 40px; height: 40px; flex: none; }
 
 .title {
   margin: 0;
-  font-family: var(--label);
-  font-weight: 400;
-  font-size: 30px;
-  letter-spacing: 0.02em;
+  font-family: var(--script);
+  font-weight: 700;
+  font-size: 36px;
+  line-height: 1.1;
   color: var(--cream);
 }
-
-.dial {
-  font-family: var(--dial);
-  font-size: 15px;
-  letter-spacing: 0.12em;
-  color: var(--amber-bright);
-  opacity: 0.8;
-  border-top: 1px solid rgba(224, 162, 74, 0.35);
-  border-bottom: 1px solid rgba(224, 162, 74, 0.35);
-  padding: 1px 6px;
-}
-.fm { font-size: 11px; letter-spacing: 0.2em; opacity: 0.8; }
-
-.eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 16px; align-self: center; }
-.eq i {
-  display: block;
-  width: 3px;
-  height: 4px;
-  background: var(--amber-bright);
-  opacity: 0.55;
-}
-.eq i:nth-child(2) { height: 7px; }
-.eq i:nth-child(3) { height: 10px; }
-.eq i:nth-child(4) { height: 6px; }
-.eq i:nth-child(5) { height: 3px; }
 
 /* ---------- Layout ---------- */
 
@@ -117,71 +127,56 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
   margin: 0 auto;
 }
 
-/* ---------- Cassette frame ---------- */
+/* ---------- Puzzle card (rainbow-edged) ---------- */
 
 .cassette {
   position: relative;
   flex: none;
-  padding: 14px 22px 22px;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #34302c 0%, var(--shell) 100%);
-  border: 1px solid var(--shell-edge);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  padding: 14px 20px 20px;
+  border-radius: 22px;
+  border: 2px solid transparent;
+  background:
+    linear-gradient(180deg, #3a3160 0%, var(--shell) 100%) padding-box,
+    var(--rainbow) border-box;
+  box-shadow: 0 14px 34px rgba(10, 6, 30, 0.45), 0 0 40px rgba(199, 166, 242, 0.12);
 }
-
-.screw {
-  position: absolute;
-  width: 9px; height: 9px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 35%, #5a544d, #2a2724);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3);
-}
-.screw::after {
-  content: "";
-  position: absolute; left: 2px; right: 2px; top: 4px; height: 1px;
-  background: rgba(0,0,0,0.45);
-  transform: rotate(-30deg);
-}
-.s1 { top: 8px; left: 8px; } .s2 { top: 8px; right: 8px; }
-.s3 { bottom: 8px; left: 8px; } .s4 { bottom: 8px; right: 8px; }
 
 .label-strip {
   display: flex;
   align-items: center;
   gap: 12px;
-  height: 30px;
+  height: 34px;
   margin: 0 6px 12px;
-  padding: 0 12px;
-  border-radius: 4px;
-  background: #e8dfcc;
-  color: #4b443c;
+  padding: 0 12px 0 8px;
+  border-radius: 17px;
+  background: #f6f0fa;
+  color: #4f2a74;
   font-family: var(--label);
 }
 .label-side {
-  display: inline-grid;
-  place-items: center;
-  width: 22px; height: 22px;
-  border-radius: 3px;
-  background: #4b443c;
-  color: #e8dfcc;
-  font-size: 14px;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  --uni-coat: #ffffff;
 }
 .label-lines {
   flex: 1;
-  height: 12px;
-  background: repeating-linear-gradient(180deg, transparent 0 5px, rgba(75, 68, 60, 0.25) 5px 6px);
+  height: 3px;
+  border-radius: 2px;
+  background: var(--rainbow);
+  opacity: 0.8;
 }
-.label-level { font-size: 15px; letter-spacing: 0.04em; }
+.label-level { font-size: 16px; font-weight: 600; letter-spacing: 0.03em; }
 
 .window {
   padding: 8px;
-  border-radius: 10px;
-  background: #1a1817;
-  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  background: #1d1832;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5);
 }
 
-.cassette.solved .window { box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6), 0 0 0 2px var(--magenta); }
-.cassette.solved .label-side { background: var(--magenta); }
+.cassette.solved { box-shadow: 0 14px 34px rgba(10, 6, 30, 0.45), 0 0 0 3px rgba(246, 168, 207, 0.35), 0 0 60px rgba(246, 168, 207, 0.35); }
+.cassette.solved .label-strip { background: var(--magenta-soft); }
 
 /* ---------- Board ---------- */
 
@@ -279,16 +274,16 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
 
 .howto {
   padding: 16px 18px;
-  border-radius: 12px;
+  border-radius: 14px;
   background: var(--paper);
-  color: #3b352f;
+  color: #3a2f55;
   font-size: 17px;
   line-height: 1.45;
 }
-.howto h2 { margin: 0 0 6px; font-family: var(--label); font-weight: 400; font-size: 20px; }
+.howto h2 { margin: 0 0 6px; font-family: var(--label); font-weight: 600; font-size: 20px; }
 .howto ul { margin: 0 0 8px; padding-left: 20px; }
 .howto p { margin: 0 0 8px; }
-.howto .btn.quiet { margin-top: 4px; background: #e2d8c5; color: #3b352f; border-color: #cfc3ad; }
+.howto .btn.quiet { margin-top: 4px; background: #ece2f4; color: #3a2f55; border-color: #d8c9e6; }
 
 .status {
   min-height: 24px;
@@ -298,7 +293,7 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
   transition: opacity 400ms ease;
 }
 .status.fade { opacity: 0; }
-.status.done { color: #d9a3bb; }
+.status.done { color: #f7c9e0; }
 
 .btn {
   min-height: 52px;
@@ -308,8 +303,8 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
   background: var(--shell);
   font-size: 17px;
 }
-.btn:active { background: #37332f; }
-.btn:disabled { opacity: 0.4; cursor: default; }
+.btn:active { background: #40366a; }
+.btn:disabled { color: #6d6390; border-color: #3d3463; cursor: default; }
 
 .pad {
   display: grid;
@@ -325,10 +320,10 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
   font-size: 30px;
   font-variant-numeric: tabular-nums;
 }
-.digit:active { background: #33302c; }
-.digit.used { color: #6c655c; }
+.digit:active { background: #3a3160; }
+.digit.used { color: #6d6390; }
 .pad.notes-on .digit { color: var(--note); font-size: 24px; border-style: dashed; }
-.pad.notes-on .digit.used { color: #5a544c; }
+.pad.notes-on .digit.used { color: #5d5480; }
 
 .tools {
   display: grid;
@@ -337,10 +332,10 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
 }
 .tool { font-size: 16px; }
 .tool .state { color: var(--muted-text); font-size: 14px; margin-left: 2px; }
-#notes[aria-pressed="true"] { border-color: var(--magenta); color: #f2dbe5; }
-#notes[aria-pressed="true"] .state { color: #d9a3bb; }
+#notes[aria-pressed="true"] { border-color: var(--amber-bright); color: #fbe4f0; }
+#notes[aria-pressed="true"] .state { color: var(--amber-bright); }
 
-.newgame { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; border-top: 1px solid #2f2b28; }
+.newgame { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; border-top: 1px solid #3a3160; }
 .newgame-label { font-size: 14px; color: var(--muted-text); letter-spacing: 0.04em; padding-top: 10px; }
 .levels { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .level.confirm { border-color: var(--amber-bright); color: var(--amber-bright); font-size: 14px; line-height: 1.15; }
@@ -350,6 +345,7 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
 @media (max-width: 900px) {
   :root { --board: min(calc(100vw - 80px), calc(100dvh - 490px), 640px); }
   .deck { flex-direction: column; align-items: center; }
+  .big-unicorn { opacity: 0.2; }
   .desk { width: min(100%, calc(max(var(--board), 450px) + 44px)); }
   .pad { grid-template-columns: repeat(9, 1fr); gap: 6px; }
   .digit { height: 56px; font-size: 24px; }
@@ -365,7 +361,8 @@ button:focus-visible { outline: 2px solid var(--amber-bright); outline-offset: 2
   .tools { grid-template-columns: repeat(3, 1fr); }
   .pad { grid-template-columns: repeat(5, 1fr); }
   .title { font-size: 24px; }
-  .dial { display: none; }
+  .title-unicorn { width: 32px; height: 32px; }
+  .big-unicorn { opacity: 0.22; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,6 @@
 # Side B
 
-A quiet single-page Sudoku. Static files only, no sound: `index.html`, `style.css`, `app.js` (puzzle data included), plus `sw.js` so it keeps working offline after the first visit.
+A quiet single-page Sudoku with a twilight unicorn theme (the unicorn and sparkles are inline SVG in `index.html`). Static files only, no sound: `index.html`, `style.css`, `app.js` (puzzle data included), plus `sw.js` so it keeps working offline after the first visit.
 
 Host: push to GitHub and turn on Pages for the branch root. No build step.
 
