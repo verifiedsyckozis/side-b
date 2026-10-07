@@ -1,5 +1,5 @@
 // Side B offline cache. Bump VERSION when shipping changes.
-const VERSION = 'side-b-v6';
+const VERSION = 'side-b-v5';
 const FILES = ['./', './index.html', './style.css', './app.js'];
 
 // cache: 'reload' skips the browser's HTTP cache so a new version never stores stale files.
