@@ -159,6 +159,51 @@ const PUZZLES = {
   const LIBRARY = {};
   for (const lvl of LEVELS) LIBRARY[lvl] = (PUZZLES[lvl] || []).filter(([p, s]) => puzzleIsSound(p, s));
 
+  // ---------- Tiles ----------
+
+  // Animal tiles: one silhouette per digit, drawn in currentColor so given/player/conflict inks still apply.
+  const ANIMALS = [
+    null,
+    { name: 'Cat', art:
+      '<path d="M34 30 L33 6 L47 18 Q50 17 53 18 L67 6 L66 30 C69 38 66 46 61 48 C72 58 76 78 72 92 H28 C24 78 28 58 39 48 C34 46 31 38 34 30 Z"/>' +
+      '<path d="M71 88 C90 86 94 64 82 58" fill="none" stroke-width="7" stroke-linecap="round"/>' },
+    { name: 'Fish', art:
+      '<path fill-rule="evenodd" d="M10 50 C22 28 54 26 72 46 L92 30 L86 50 L92 70 L72 54 C54 74 22 72 10 50 Z M26 42 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 Z"/>' },
+    { name: 'Bird', art:
+      '<path fill-rule="evenodd" d="M20 38 C20 24 40 20 46 34 C52 42 66 44 76 40 L95 30 L84 52 C78 70 52 76 36 66 C26 60 20 50 20 38 Z M28 34 a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0 Z"/>' +
+      '<path d="M21 33 L7 38 L21 42 Z"/>' +
+      '<path d="M44 70 L42 86 M56 70 L56 86" fill="none" stroke-width="4" stroke-linecap="round"/>' },
+    { name: 'Rabbit', art:
+      '<path d="M37 40 C30 26 30 6 37 4 C44 2 46 22 46 36 Z M63 40 C70 26 70 6 63 4 C56 2 54 22 54 36 Z"/>' +
+      '<path d="M50 32 C62 32 68 40 66 52 C78 60 80 82 72 92 H28 C20 82 22 60 34 52 C32 40 38 32 50 32 Z"/>' },
+    { name: 'Turtle', art:
+      '<path d="M14 64 C14 34 70 26 76 64 Z"/>' +
+      '<path d="M10 62 H80 C84 62 84 70 80 70 H14 C8 70 6 62 10 62 Z"/>' +
+      '<path d="M74 60 C76 50 82 46 88 48 C96 50 96 60 90 62 Z"/>' +
+      '<path d="M22 68 H34 V80 C34 84 22 84 22 80 Z M56 68 H68 V80 C68 84 56 84 56 80 Z"/>' },
+    { name: 'Snail', art:
+      '<path d="M60 52 A5 5 0 0 1 70 52 A10 10 0 0 1 50 52 A15 15 0 0 1 80 52 A20 20 0 0 1 40 52 A22.5 22.5 0 0 1 85 52" fill="none" stroke-width="7" stroke-linecap="round"/>' +
+      '<path d="M8 80 C8 74 14 72 20 72 H90 C94 72 94 80 88 80 Z"/>' +
+      '<path d="M12 74 C10 60 14 50 20 50 C26 50 28 60 28 74 Z"/>' +
+      '<path d="M16 52 L10 34 M24 52 L28 34" fill="none" stroke-width="3.5" stroke-linecap="round"/>' +
+      '<circle cx="10" cy="33" r="4"/><circle cx="28" cy="33" r="4"/>' },
+    { name: 'Owl', art:
+      '<path fill-rule="evenodd" d="M24 12 L40 24 Q50 21 60 24 L76 12 L76 40 C80 68 68 92 50 92 C32 92 20 68 24 40 Z M29 42 a11 11 0 1 0 22 0 a11 11 0 1 0 -22 0 Z M49 42 a11 11 0 1 0 22 0 a11 11 0 1 0 -22 0 Z"/>' +
+      '<circle cx="40" cy="43" r="4.5"/><circle cx="60" cy="43" r="4.5"/>' +
+      '<path d="M46 54 H54 L50 62 Z"/>' },
+    { name: 'Elephant', art:
+      '<path fill-rule="evenodd" d="M40 24 C60 18 84 22 88 44 C90 56 86 64 82 66 V88 H70 V70 H52 V88 H40 V68 C34 66 30 60 28 56 C24 64 22 74 26 84 C27 88 21 90 18 86 C12 76 10 60 14 46 C16 32 28 26 40 24 Z M24 40 a3.5 3.5 0 1 0 7 0 a3.5 3.5 0 1 0 -7 0 Z"/>' +
+      '<path d="M88 46 C94 50 94 58 92 62" fill="none" stroke-width="3" stroke-linecap="round"/>' },
+    { name: 'Butterfly', art:
+      '<path d="M48 44 C40 20 18 10 10 20 C4 30 18 48 46 50 Z M52 44 C60 20 82 10 90 20 C96 30 82 48 54 50 Z"/>' +
+      '<path d="M46 54 C30 54 18 64 22 76 C26 86 42 80 47 60 Z M54 54 C70 54 82 64 78 76 C74 86 58 80 53 60 Z"/>' +
+      '<path d="M50 32 C54 32 54 36 54 40 V74 C54 80 46 80 46 74 V40 C46 36 46 32 50 32 Z"/>' +
+      '<path d="M48 34 C46 24 42 18 36 14 M52 34 C54 24 58 18 64 14" fill="none" stroke-width="2.5" stroke-linecap="round"/>' },
+  ];
+
+  const svgOf = (d) => `<svg viewBox="0 0 100 100" aria-hidden="true" fill="currentColor" stroke="currentColor" stroke-width="0">${ANIMALS[d].art}</svg>`;
+  const nameOf = (d) => (tiles === 'animals' ? ANIMALS[d].name.toLowerCase() : String(d));
+
   // ---------- Storage ----------
 
   const KEY = 'sideb.v1';
@@ -171,6 +216,8 @@ const PUZZLES = {
       try { localStorage.setItem(KEY + '.' + k, JSON.stringify(v)); } catch (e) { /* private mode: play on without saving */ }
     },
   };
+
+  let tiles = store.get('tiles', 'animals') === 'numbers' ? 'numbers' : 'animals';
 
   // ---------- State ----------
 
@@ -383,11 +430,38 @@ const PUZZLES = {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'digit';
-      b.textContent = d;
       b.dataset.d = d;
       padEl.appendChild(b);
       digitButtons.push(b);
     }
+  }
+
+  // Redraws everything that shows a digit; called at boot and when the tile style changes.
+  function paintTiles() {
+    const animals = tiles === 'animals';
+    document.body.classList.toggle('animals', animals);
+    digitButtons.forEach((b, k) => {
+      const d = k + 1;
+      if (animals) {
+        b.innerHTML = svgOf(d) + `<span class="digit-name">${ANIMALS[d].name}</span>`;
+        b.setAttribute('aria-label', ANIMALS[d].name);
+      } else {
+        b.textContent = d;
+        b.removeAttribute('aria-label');
+      }
+    });
+    document.querySelectorAll('.tiles-opt').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.tiles === tiles)));
+    document.querySelectorAll('.rule-what').forEach((el) => { el.textContent = animals ? 'every animal' : '1 to 9'; });
+    $('notes-what').textContent = animals ? 'animals' : 'digits';
+    cells.forEach((el) => { delete el.dataset.key; });
+  }
+
+  function setTiles(t) {
+    if (t === tiles) return;
+    tiles = t;
+    store.set('tiles', t);
+    paintTiles();
+    render();
   }
 
   function render() {
@@ -417,14 +491,14 @@ const PUZZLES = {
       if (el.dataset.key !== key) {
         el.dataset.key = key;
         if (v) {
-          el.textContent = v;
+          if (tiles === 'animals') el.innerHTML = svgOf(v); else el.textContent = v;
         } else if (state.notes[i]) {
           const grid = document.createElement('span');
           grid.className = 'notes';
           for (let d = 1; d <= 9; d++) {
             const s = document.createElement('span');
             if (state.notes[i] & (1 << d)) {
-              s.textContent = d;
+              if (tiles === 'animals') s.innerHTML = svgOf(d); else s.textContent = d;
               if (d === selVal) s.className = 'hot';
             }
             grid.appendChild(s);
@@ -454,8 +528,8 @@ const PUZZLES = {
   function describe(i, conflicts) {
     const v = state.values[i];
     let s = `Row ${ROW(i) + 1}, column ${COL(i) + 1}: `;
-    if (v) s += v + (state.given[i] ? ', given' : '') + (conflicts.has(i) ? ', conflict' : '');
-    else if (state.notes[i]) s += 'notes ' + [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((d) => state.notes[i] & (1 << d)).join(' ');
+    if (v) s += nameOf(v) + (state.given[i] ? ', given' : '') + (conflicts.has(i) ? ', conflict' : '');
+    else if (state.notes[i]) s += 'notes ' + [1, 2, 3, 4, 5, 6, 7, 8, 9].filter((d) => state.notes[i] & (1 << d)).map(nameOf).join(' ');
     else s += 'empty';
     return s;
   }
@@ -537,6 +611,7 @@ const PUZZLES = {
     $('help').addEventListener('click', () => { $('howto').hidden = !$('howto').hidden; });
     $('howto-close').addEventListener('click', () => { $('howto').hidden = true; store.set('seenHowTo', true); });
     document.querySelectorAll('.level').forEach((b) => b.addEventListener('click', () => newPuzzle(b)));
+    document.querySelectorAll('.tiles-opt').forEach((b) => b.addEventListener('click', () => setTiles(b.dataset.tiles)));
 
     document.addEventListener('keydown', (e) => {
       if (e.altKey) return;
@@ -561,6 +636,7 @@ const PUZZLES = {
   // ---------- Boot ----------
 
   buildBoard();
+  paintTiles();
   bind();
   if (!restore()) startPuzzle('easy');
   render();

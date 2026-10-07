@@ -11,4 +11,6 @@ Puzzles: 30 each for Easy (38–46 clues), Medium (30–31), Hard (25–29). Eve
 
 When shipping changes, bump `VERSION` in `sw.js` so iPads pick up the new files.
 
-Keys: arrows move, 1–9 place, N notes, Backspace erase, Z undo, Shift+Z or Y redo, H hint.
+Tiles: the 1–9 / Animals switch in the header swaps digits for nine animal silhouettes (cat, fish, bird, rabbit, turtle, snail, owl, elephant, butterfly). Animals is the default; the choice is saved. The animals are inline SVG in `app.js`, so still no external assets.
+
+Keys: arrows move, 1–9 place (1 = cat … 9 = butterfly), N notes, Backspace erase, Z undo, Shift+Z or Y redo, H hint.

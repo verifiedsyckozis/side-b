@@ -18,6 +18,10 @@
       <span class="dial" aria-hidden="true"><span class="fm">FM</span> 98.7</span>
       <span class="eq" id="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
     </div>
+    <div class="tiles-switch" role="group" aria-label="Tiles">
+      <button class="tiles-opt" type="button" data-tiles="numbers" aria-pressed="false">1–9</button>
+      <button class="tiles-opt" type="button" data-tiles="animals" aria-pressed="false">Animals</button>
+    </div>
   </header>
 
   <main class="deck">
@@ -37,11 +41,11 @@
       <div class="howto" id="howto" hidden>
         <h2>How to play</h2>
         <ul>
-          <li>Each row holds 1 to 9 once.</li>
-          <li>Each column holds 1 to 9 once.</li>
-          <li>Each 3×3 box holds 1 to 9 once.</li>
+          <li>Each row holds <span class="rule-what">1 to 9</span> once.</li>
+          <li>Each column holds <span class="rule-what">1 to 9</span> once.</li>
+          <li>Each 3×3 box holds <span class="rule-what">1 to 9</span> once.</li>
         </ul>
-        <p><strong>Notes</strong> are small pencil marks for digits you're considering. Turn Notes on, then tap digits to jot them in a square.</p>
+        <p><strong>Notes</strong> are small pencil marks for <span id="notes-what">digits</span> you're considering. Turn Notes on, then tap the pad to jot them in a square.</p>
         <button class="btn quiet" id="howto-close" type="button">Got it</button>
       </div>
 
